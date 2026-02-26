@@ -1,36 +1,145 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Campaign Landing Page Builder
+
+A full-stack campaign landing page builder with drag-and-drop editor, real-time preview, and one-click H5 page publishing.
+
+**Live Demo:** https://campaign-landing-page.vercel.app/
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                        Frontend                         │
+│                                                         │
+│  ┌─────────────┐  ┌──────────────┐  ┌───────────────┐  │
+│  │  Campaign    │  │  Drag & Drop │  │   H5 Page     │  │
+│  │  Dashboard   │  │  Editor      │  │   Preview     │  │
+│  │  (/)         │  │  (/editor)   │  │   (/h5)       │  │
+│  └─────────────┘  └──────────────┘  └───────────────┘  │
+│         │                │                  │           │
+│         └────────────────┼──────────────────┘           │
+│                          │                              │
+│                    Zustand Store                         │
+│                  (Editor State)                          │
+└──────────────────────────┬──────────────────────────────┘
+                           │
+                      REST API
+                           │
+┌──────────────────────────┴──────────────────────────────┐
+│                     Backend (API Routes)                 │
+│                                                         │
+│  /api/campaigns    CRUD for campaigns                   │
+│  /api/pages        CRUD for pages                       │
+│  /api/pages/publish One-click publish to H5             │
+│  /api/tracking     User behavior tracking               │
+│  /api/poster       Poster generation                    │
+│  /api/products     Product data                         │
+└──────────────────────────┬──────────────────────────────┘
+                           │
+                     Prisma ORM
+                           │
+┌──────────────────────────┴──────────────────────────────┐
+│                  Turso (Cloud SQLite)                    │
+│                                                         │
+│  Campaign  ──1:N──  Page  ──1:N──  TrackingEvent        │
+└─────────────────────────────────────────────────────────┘
+```
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16 (App Router, Turbopack) |
+| Language | TypeScript |
+| Styling | Tailwind CSS 4 |
+| State Management | Zustand |
+| Drag & Drop | @dnd-kit |
+| ORM | Prisma 7 |
+| Database | Turso (libSQL, cloud SQLite) |
+| Deployment | Vercel |
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── page.tsx                 # Campaign dashboard
+│   ├── editor/[campaignId]/     # Drag-and-drop page editor
+│   ├── preview/[pageId]/        # Page preview (SSR)
+│   ├── h5/[pageId]/             # Published H5 page (public)
+│   └── api/
+│       ├── campaigns/           # Campaign CRUD
+│       ├── pages/               # Page CRUD + publish
+│       ├── tracking/            # Event tracking
+│       ├── poster/              # Poster generation
+│       └── products/            # Product data
+├── components/
+│   ├── editor/                  # Editor UI components
+│   │   ├── EditorCanvas.tsx     # Main canvas with drag-and-drop
+│   │   ├── ComponentPanel.tsx   # Component palette
+│   │   ├── PropertyPanel.tsx    # Property editor sidebar
+│   │   └── Toolbar.tsx          # Editor toolbar
+│   └── h5/                      # H5 renderers (17 component types)
+│       ├── PageRenderer.tsx     # Page layout renderer
+│       └── components/          # Banner, Button, Countdown, etc.
+├── store/                       # Zustand editor store
+├── types/                       # TypeScript type definitions
+├── lib/                         # Database client & utilities
+└── mock/                        # Templates & product mock data
+```
+
+## Available Components
+
+The editor supports 17 drag-and-drop component types:
+
+Banner, Button, ContactBar, Countdown, Coupon, Divider, FlashDeal, ImageBlock, NavBar, PriceTable, ProductCard, ProductGrid, ProductList, PromoSection, RechargeCard, Spacer, TextBlock
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- A [Turso](https://turso.tech) account (free tier)
+
+### Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Install dependencies
+npm install
+
+# Set up Turso database
+brew install tursodatabase/tap/turso
+turso auth login
+turso db create campaign-landing-page
+
+# Get credentials and add to .env
+turso db show campaign-landing-page --url
+turso db tokens create campaign-landing-page
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create a `.env` file:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+TURSO_DATABASE_URL=libsql://your-db.turso.io
+TURSO_AUTH_TOKEN=your-token
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Push database schema
+turso db shell campaign-landing-page < prisma/migrations/20260220100437_init/migration.sql
 
-## Learn More
+# Generate Prisma client
+npx prisma generate
 
-To learn more about Next.js, take a look at the following resources:
+# Start dev server
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Open http://localhost:3000 to see the app.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy
 
-## Deploy on Vercel
+Deploy to Vercel and set environment variables `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in the project settings.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
