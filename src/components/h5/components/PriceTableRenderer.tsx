@@ -10,7 +10,7 @@ interface Props {
 export function PriceTableRenderer({ node }: Props) {
   const {
     title = 'Discount Tiers',
-    currency = '¥',
+    currency = '$',
     tiers = [],
   } = node.props as {
     title?: string;
