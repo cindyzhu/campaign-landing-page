@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="440" viewBox="0 0 750 440">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1B5E20"/>
+      <stop offset="100%" stop-color="#0D3B0F"/>
+    </linearGradient>
+  </defs>
+  <rect width="750" height="440" fill="url(#bg)"/>
+  <circle cx="375" cy="160" r="80" fill="none" stroke="#FFD700" stroke-width="3" opacity="0.5"/>
+  <circle cx="375" cy="160" r="60" fill="none" stroke="#FFD700" stroke-width="2" opacity="0.3"/>
+  <polygon points="375,90 390,140 440,140 400,170 415,220 375,190 335,220 350,170 310,140 360,140" fill="#FFD700" opacity="0.8"/>
+  <text x="375" y="300" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="#FFD700" text-anchor="middle">HOLIDAY GIFTS</text>
+  <text x="375" y="350" font-family="Arial, sans-serif" font-size="24" fill="#A5D6A7" text-anchor="middle">Up to 25% Off Everything</text>
+  <rect x="100" y="380" width="550" height="3" rx="1.5" fill="#2E7D32"/>
+  <circle cx="100" cy="381" r="6" fill="#FFD700"/>
+  <circle cx="375" cy="381" r="6" fill="#FFD700"/>
+  <circle cx="650" cy="381" r="6" fill="#FFD700"/>
+</svg>

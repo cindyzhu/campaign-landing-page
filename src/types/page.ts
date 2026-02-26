@@ -19,7 +19,7 @@ export type ComponentType =
   | 'recharge-card'
   | 'flash-deal';
 
-// --- 新增组件 Props 类型提示 ---
+// --- Component Props Type Hints ---
 
 export interface PriceTableTier {
   threshold: number;
