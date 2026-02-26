@@ -1,0 +1,48 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  status      String   @default("draft")
+  createdBy   String   @default("admin")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  pages       Page[]
+}
+
+model Page {
+  id           String   @id @default(cuid())
+  campaignId   String
+  campaign     Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  title        String
+  content      String
+  status       String   @default("draft")
+  publishedUrl String?
+  posterUrl    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model TrackingEvent {
+  id          String   @id @default(cuid())
+  eventType   String
+  pageId      String
+  campaignId  String
+  fingerprint String
+  payload     String
+  deviceInfo  String
+  timestamp   DateTime @default(now())
+
+  @@index([pageId, eventType])
+  @@index([campaignId, eventType])
+  @@index([fingerprint])
+}
